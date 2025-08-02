@@ -10,7 +10,7 @@ class CityLocalDataStore @Inject constructor(
     private val dao: CityDao
 ) {
 
-    suspend fun getCities(): Flow<List<CityEntity>> {
+    fun getCities(): Flow<List<CityEntity>> {
         return dao.getCities()
     }
 
