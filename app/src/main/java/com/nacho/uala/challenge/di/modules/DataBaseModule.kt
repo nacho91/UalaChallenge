@@ -1,4 +1,4 @@
-package com.nacho.uala.challenge.di
+package com.nacho.uala.challenge.di.modules
 
 import android.content.Context
 import androidx.room.Room
