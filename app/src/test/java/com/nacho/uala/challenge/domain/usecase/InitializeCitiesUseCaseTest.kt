@@ -8,9 +8,12 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 import com.nacho.uala.challenge.domain.util.Result
+import io.mockk.unmockkAll
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -26,6 +29,12 @@ class InitializeCitiesUseCaseTest {
 
         repository = mockk()
         useCase = InitializeCitiesUseCase(repository, testDispatcher)
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+        unmockkAll()
     }
 
     @Test

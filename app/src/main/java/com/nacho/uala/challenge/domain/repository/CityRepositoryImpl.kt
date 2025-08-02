@@ -1,6 +1,6 @@
 package com.nacho.uala.challenge.domain.repository
 
-import com.nacho.uala.challenge.data.local.CityLocalDataStore
+import com.nacho.uala.challenge.data.local.CityLocalDataSource
 import com.nacho.uala.challenge.data.local.model.CityEntity
 import com.nacho.uala.challenge.data.local.model.toDomain
 import com.nacho.uala.challenge.data.remote.CityRemoteDataSource
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 class CityRepositoryImpl @Inject constructor(
     private val remote: CityRemoteDataSource,
-    private val local: CityLocalDataStore
+    private val local: CityLocalDataSource
 ): CityRepository {
 
     override suspend fun fetchCities(): Result<List<City>> {
