@@ -6,7 +6,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class CityLocalDataStore @Inject constructor(
+class CityLocalDataSource @Inject constructor(
     private val dao: CityDao
 ) {
 

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">UalaChallenge</string>
+
+    <string name="initializing">Initializing…</string>
+    <string name="error">Something went wrong!</string>
+    <string name="retry_button">Retry</string>
 </resources>
