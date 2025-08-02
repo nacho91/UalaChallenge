@@ -8,8 +8,3 @@ data class CityDTO(
     val name: String,
     @SerializedName("coord") val coordinates: CoordinatesDTO
 )
-
-data class CoordinatesDTO(
-    val lat: Double,
-    val long: Double
-)
