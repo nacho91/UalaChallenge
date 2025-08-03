@@ -14,6 +14,10 @@ class CityLocalDataSource @Inject constructor(
         return dao.getCities()
     }
 
+    suspend fun getCityById(id: Int): CityEntity? {
+        return dao.getCityById(id)
+    }
+
     suspend fun saveAll(cities: List<CityEntity>) {
         dao.insertAll(cities)
     }

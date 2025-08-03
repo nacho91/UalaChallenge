@@ -10,6 +10,8 @@ interface CityRepository {
 
     fun getCities(): Flow<Result<List<City>>>
 
+    suspend fun getCityById(id: Int): Result<City>
+
     suspend fun saveCities(cities: List<City>): Result<Unit>
 
     suspend fun toggleCityFavorite(city: City): Result<Unit>

@@ -29,11 +29,13 @@ class ListScreenTest {
             )
         )
 
+        every { mockViewModel.selectedCity } returns MutableStateFlow(null)
+
         composeTestRule.setContent {
             WithOrientation(Configuration.ORIENTATION_PORTRAIT) {
                 ListScreen(
                     viewModel = mockViewModel,
-                    onCityClick = {}
+                    navigateMap = {}
                 )
             }
         }
@@ -58,11 +60,13 @@ class ListScreenTest {
             )
         )
 
+        every { mockViewModel.selectedCity } returns MutableStateFlow(null)
+
         composeTestRule.setContent {
             WithOrientation(Configuration.ORIENTATION_LANDSCAPE) {
                 ListScreen(
                     viewModel = mockViewModel,
-                    onCityClick = {}
+                    navigateMap = {}
                 )
             }
         }
@@ -96,11 +100,13 @@ class ListScreenTest {
             )
         )
 
+        every { mockViewModel.selectedCity } returns MutableStateFlow(null)
+
         composeTestRule.setContent {
             WithOrientation(Configuration.ORIENTATION_PORTRAIT) {
                 ListScreen(
                     viewModel = mockViewModel,
-                    onCityClick = {}
+                    navigateMap = {}
                 )
             }
         }
@@ -110,5 +116,41 @@ class ListScreenTest {
             .performClick()
 
         verify { mockViewModel.onToggleCityFavorite(testCity) }
+    }
+
+    @Test
+    fun cityClick_callsOnCitySelected() {
+        val mockViewModel = mockk<ListViewModel>(relaxed = true)
+
+        val testCity = City(
+            id = 1,
+            name = "Buenos Aires",
+            country = "AR",
+            lat = -34.6,
+            lon = -58.4,
+            isFavorite = false
+        )
+
+        every { mockViewModel.uiState } returns MutableStateFlow(
+            ListUiState(
+                cities = listOf(testCity),
+                isLoading = false,
+                isError = false
+            )
+        )
+        every { mockViewModel.selectedCity } returns MutableStateFlow(null)
+
+        composeTestRule.setContent {
+            ListScreen(
+                viewModel = mockViewModel,
+                navigateMap = {}
+            )
+        }
+
+        composeTestRule
+            .onNodeWithTag("city_item")
+            .performClick()
+
+        verify { mockViewModel.onCitySelected(testCity) }
     }
 }

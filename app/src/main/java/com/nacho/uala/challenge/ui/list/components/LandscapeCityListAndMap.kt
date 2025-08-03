@@ -2,15 +2,26 @@ package com.nacho.uala.challenge.ui.list.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import com.nacho.uala.challenge.R.string.map_empty_state
 import com.nacho.uala.challenge.domain.model.City
+import com.nacho.uala.challenge.ui.map.components.CityMap
 
 @Composable
 fun LandscapeListAndMap(
     modifier: Modifier = Modifier,
     cities: List<City>,
+    selectedCity: City?,
     onCityClick: (City) -> Unit,
     onCityToggleFavorite: (City) -> Unit
 ) {
@@ -25,9 +36,22 @@ fun LandscapeListAndMap(
         )
 
         Box(
-            modifier = Modifier.weight(2f).testTag("city_map_container")
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(2f)
+                .testTag("city_map_container"),
+            contentAlignment = Alignment.Center
         ) {
-            // TODO: implement map view
+            if (selectedCity != null) {
+                CityMap(
+                    city = selectedCity
+                )
+            } else {
+                Text(
+                    text = stringResource(map_empty_state),
+                    style = MaterialTheme.typography.titleLarge,
+                )
+            }
         }
     }
 }

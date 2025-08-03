@@ -13,6 +13,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -31,9 +33,10 @@ import com.nacho.uala.challenge.ui.list.components.PortraitCityList
 fun ListScreen(
     modifier: Modifier = Modifier,
     viewModel: ListViewModel = hiltViewModel(),
-    onCityClick: (City) -> Unit
+    navigateMap: (City) -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
+    val selectedCity by viewModel.selectedCity.collectAsState()
 
     when {
         state.isLoading -> {
@@ -46,7 +49,13 @@ fun ListScreen(
             ListContent(
                 modifier = modifier,
                 cities = state.cities!!,
-                onCityClick = onCityClick,
+                selectedCity = selectedCity,
+                navigateMap = { city ->
+                    navigateMap(city)
+                },
+                onCityClick = { city ->
+                    viewModel.onCitySelected(city)
+                },
                 onToggleCityFavorite = { city ->
                     viewModel.onToggleCityFavorite(city)
                 }
@@ -59,6 +68,8 @@ fun ListScreen(
 fun ListContent(
     modifier: Modifier = Modifier,
     cities: List<City>,
+    selectedCity: City?,
+    navigateMap: (City) -> Unit,
     onCityClick: (City) -> Unit,
     onToggleCityFavorite: (City) -> Unit
 ) {
@@ -69,8 +80,9 @@ fun ListContent(
         LandscapeListAndMap(
             modifier = modifier.fillMaxSize(),
             cities = cities,
-            onCityClick = {
-                // TODO: implement map refresh
+            selectedCity = selectedCity,
+            onCityClick = { city ->
+                onCityClick(city)
             },
             onCityToggleFavorite = onToggleCityFavorite,
 
@@ -79,7 +91,10 @@ fun ListContent(
         PortraitCityList(
             modifier = modifier.fillMaxSize().testTag("city_list_container"),
             cities = cities,
-            onCityClick = onCityClick,
+            onCityClick = { city ->
+                onCityClick(city)
+                navigateMap(city)
+            },
             onCityToggleFavorite = onToggleCityFavorite
         )
     }

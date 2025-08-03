@@ -40,6 +40,20 @@ class CityRepositoryImpl @Inject constructor(
             }
     }
 
+    override suspend fun getCityById(id: Int): Result<City> {
+        return try {
+            val city = local.getCityById(id)
+
+            if (city != null) {
+                Result.Success(city.toDomain())
+            } else {
+                Result.Error.Database(Throwable("City not found"))
+            }
+        } catch (e: Throwable) {
+            Result.Error.Database(e)
+        }
+    }
+
     override suspend fun saveCities(cities: List<City>): Result<Unit> {
         return try {
             local.saveAll(cities.map { it.toEntity() })

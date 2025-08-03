@@ -42,6 +42,7 @@ fun CityList(
     ) {
         items(cities) { city ->
             CityItem(
+                modifier = Modifier.testTag("city_item"),
                 city = city,
                 onClick = {
                     onClick(city)

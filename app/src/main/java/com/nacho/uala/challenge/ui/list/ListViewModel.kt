@@ -25,6 +25,9 @@ class ListViewModel @Inject constructor(
     private val _state = MutableStateFlow(ListUiState())
     val uiState: StateFlow<ListUiState> = _state
 
+    private val _selectedCity = MutableStateFlow<City?>(null)
+    val selectedCity: StateFlow<City?> = _selectedCity
+
     init {
         getCitiesUseCase()
             .onEach { result ->
@@ -41,6 +44,10 @@ class ListViewModel @Inject constructor(
         viewModelScope.launch {
             toggleCityFavoriteUseCase(city)
         }
+    }
+
+    fun onCitySelected(city: City) {
+        _selectedCity.value = city
     }
 }
 
