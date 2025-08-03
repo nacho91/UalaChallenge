@@ -1,0 +1,22 @@
+package com.nacho.uala.challenge.domain.usecase
+
+import com.nacho.uala.challenge.di.qualifiers.IoDispatcher
+import com.nacho.uala.challenge.domain.model.City
+import com.nacho.uala.challenge.domain.repository.CityRepository
+import com.nacho.uala.challenge.domain.util.Result
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class GetCitiesUseCase @Inject constructor(
+    private val repository: CityRepository,
+    @param:IoDispatcher private val dispatcher: CoroutineDispatcher
+) {
+
+    operator fun invoke(): Flow<Result<List<City>>> {
+        return repository.getCities().flowOn(dispatcher)
+    }
+}
