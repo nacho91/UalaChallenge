@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface CityDao {
 
-    @Query("SELECT * FROM cities")
+    @Query("SELECT * FROM cities ORDER BY name ASC, country ASC")
     fun getCities(): Flow<List<CityEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

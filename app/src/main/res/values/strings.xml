@@ -4,4 +4,9 @@
     <string name="initializing">Initializing…</string>
     <string name="error">Something went wrong!</string>
     <string name="retry_button">Retry</string>
+
+    <string name="city_title">%1$s, %2$s</string>
+    <string name="city_coordinates">Coordinates: %1$f, %2$f</string>
+    <string name="city_favorite_button_desc">Favorite button</string>
+
 </resources>

@@ -15,6 +15,6 @@ fun CityDTO.toDomain(): City = City(
     country = country,
     name = name,
     lat = coordinates.lat,
-    lon = coordinates.long,
+    lon = coordinates.lon,
     isFavorite = false
 )

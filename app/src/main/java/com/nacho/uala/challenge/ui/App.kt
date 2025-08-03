@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.nacho.uala.challenge.ui.list.ListScreen
 import com.nacho.uala.challenge.ui.splash.SplashScreen
 
 @Composable
@@ -28,10 +29,13 @@ fun App() {
                 }
 
                 composable("list") {
-
+                    ListScreen(
+                        onCityClick = { city ->
+                            // TODO navigate to map
+                        }
+                    )
                 }
             }
         }
-
     }
 }
