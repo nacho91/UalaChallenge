@@ -5,10 +5,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.nacho.uala.challenge.ui.list.ListScreen
+import com.nacho.uala.challenge.ui.map.MapScreen
 import com.nacho.uala.challenge.ui.splash.SplashScreen
 
 @Composable
@@ -30,9 +33,20 @@ fun App() {
 
                 composable("list") {
                     ListScreen(
-                        onCityClick = { city ->
-                            // TODO navigate to map
+                        navigateMap = { city ->
+                            navController.navigate("map/${city.id}")
                         }
+                    )
+                }
+
+                composable(
+                    "map/{cityId}",
+                    arguments = listOf(navArgument("cityId") { type = NavType.IntType })
+                ) { backStackEntry ->
+                    val cityId = backStackEntry.arguments?.getInt("cityId") ?: return@composable
+
+                    MapScreen(
+                        cityId = cityId
                     )
                 }
             }

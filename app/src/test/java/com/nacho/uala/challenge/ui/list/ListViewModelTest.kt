@@ -97,4 +97,17 @@ class ListViewModelTest {
 
         coVerify { toggleCityFavoriteUseCase.invoke(any()) }
     }
+
+    @Test
+    fun `onCitySelected updates selectedCity`() = runTest {
+        val city = mockk<City>(relaxed = true)
+        every { getCitiesUseCase.invoke() } returns flowOf(Result.Success(listOf(city)))
+
+        viewModel = ListViewModel(getCitiesUseCase, toggleCityFavoriteUseCase)
+
+        viewModel.onCitySelected(city)
+
+        val selected = viewModel.selectedCity.value
+        assertEquals(city, selected)
+    }
 }
