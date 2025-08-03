@@ -14,6 +14,9 @@ interface CityDao {
     @Query("SELECT * FROM cities ORDER BY name ASC, country ASC")
     fun getCities(): Flow<List<CityEntity>>
 
+    @Query("SELECT * FROM cities WHERE id = :id LIMIT 1")
+    suspend fun getCityById(id: Int): CityEntity?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(cities: List<CityEntity>)
 
