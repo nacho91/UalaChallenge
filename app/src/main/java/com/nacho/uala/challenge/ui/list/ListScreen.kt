@@ -5,14 +5,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -23,7 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -32,8 +25,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.nacho.uala.challenge.R
-import com.nacho.uala.challenge.R.string.city_favorite_button_desc
 import com.nacho.uala.challenge.R.string.error
 import com.nacho.uala.challenge.R.string.favorite_filter_button_desc
 import com.nacho.uala.challenge.R.string.no_results
@@ -47,7 +38,8 @@ import com.nacho.uala.challenge.ui.list.components.PortraitCityList
 fun ListScreen(
     modifier: Modifier = Modifier,
     viewModel: ListViewModel = hiltViewModel(),
-    navigateMap: (City) -> Unit
+    navigateMap: (City) -> Unit,
+    navigateDetail: (City) -> Unit
 ) {
     val selectedCity by viewModel.selectedCity.collectAsState()
     val query by viewModel.searchQuery.collectAsState()
@@ -84,9 +76,8 @@ fun ListScreen(
                     listState = listState,
                     cities = cities,
                     selectedCity = selectedCity,
-                    navigateMap = { city ->
-                        navigateMap(city)
-                    },
+                    navigateMap = navigateMap,
+                    navigateDetail = navigateDetail,
                     onCityClick = { city ->
                         viewModel.onCitySelected(city)
                     },
@@ -149,6 +140,7 @@ fun ListContent(
     cities: LazyPagingItems<CityUiState>,
     selectedCity: City?,
     navigateMap: (City) -> Unit,
+    navigateDetail: (City) -> Unit,
     onCityClick: (City) -> Unit,
     onToggleCityFavorite: (CityUiState) -> Unit
 ) {
@@ -164,7 +156,10 @@ fun ListContent(
             onCityClick = { city ->
                 onCityClick(city)
             },
-            onCityToggleFavorite = onToggleCityFavorite
+            onCityToggleFavorite = onToggleCityFavorite,
+            onCityDetailClick = { city ->
+                navigateDetail(city)
+            }
         )
     } else {
         PortraitCityList(
@@ -177,7 +172,10 @@ fun ListContent(
                 onCityClick(city)
                 navigateMap(city)
             },
-            onCityToggleFavorite = onToggleCityFavorite
+            onCityToggleFavorite = onToggleCityFavorite,
+            onCityDetailClick = { city ->
+                navigateDetail(city)
+            }
         )
     }
 }
