@@ -4,10 +4,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -28,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import com.nacho.uala.challenge.R.string.city_title
 import com.nacho.uala.challenge.R.string.city_coordinates
@@ -35,6 +38,9 @@ import com.nacho.uala.challenge.R.string.city_favorite_button_desc
 import com.nacho.uala.challenge.R.string.error
 import com.nacho.uala.challenge.domain.model.City
 import com.nacho.uala.challenge.ui.list.CityUiState
+import kotlinx.coroutines.flow.MutableStateFlow
+import androidx.paging.compose.collectAsLazyPagingItems
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun CityList(
@@ -76,6 +82,7 @@ fun CityList(
                     CircularProgressIndicator()
                 }
             }
+
             is LoadState.Error -> item {
                 Text(
                     modifier = Modifier
@@ -84,10 +91,12 @@ fun CityList(
                     text = stringResource(error)
                 )
             }
+
             else -> Unit
         }
     }
 }
+
 
 @Composable
 fun CityItem(
@@ -109,7 +118,7 @@ fun CityItem(
     ) {
         Column(
             modifier = Modifier.weight(1f)
-        ){
+        ) {
             Row {
                 Text(
                     text = stringResource(city_title, city.name, city.country),
@@ -136,35 +145,43 @@ fun CityItem(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun CityListPreview() {
-    /*val cities = listOf(
-        City(
-            id = 0,
-            country = "AR",
-            name = "Argentina",
-            lat = 0.0,
-            lon = 0.0,
-            isFavorite = false
+    val cities = listOf(
+        CityUiState(
+            city = City(
+                id = 0,
+                country = "AR",
+                name = "Argentina",
+                lat = 0.0,
+                lon = 0.0,
+                isFavorite = false
+            ),
+            isFavorite = MutableStateFlow(false)
         ),
-        City(
-            id = 0,
-            country = "UY",
-            name = "Uruguay",
-            lat = 0.0,
-            lon = 0.0,
-            isFavorite = true
+        CityUiState(
+            city = City(
+                id = 1,
+                country = "UY",
+                name = "Uruguay",
+                lat = 0.0,
+                lon = 0.0,
+                isFavorite = true
+            ),
+            isFavorite = MutableStateFlow(true)
         )
     )
 
-    val pagingData: PagingData<City> = PagingData.from(cities)
-    val lazyItems: LazyPagingItems<City> = pagingData.collectAsLazyPagingItems()
+    val pagingData = PagingData.from(cities)
+    val lazyPagingCities: LazyPagingItems<CityUiState> =
+        flowOf(pagingData).collectAsLazyPagingItems()
 
     CityList(
-        modifier = Modifier.background(Color.White),
-        cities = lazyItems,
+        modifier = Modifier.fillMaxSize(),
+        listState = rememberLazyListState(),
+        cities = lazyPagingCities,
         onClick = {},
         onToggleFavorite = {}
-    )*/
+    )
 }

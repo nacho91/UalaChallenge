@@ -19,6 +19,7 @@ import org.junit.Test
 import com.nacho.uala.challenge.domain.util.Result
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.verify
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.Assert.assertEquals
@@ -51,7 +52,7 @@ class ListViewModelTest {
     fun `when GetCitiesUseCase emits data, ViewModel provides CityUiState in flow`() = runTest {
         val city = mockk<City>(relaxed = true)
 
-        every { getCitiesUseCase.invoke() } returns flowOf(PagingData.from(listOf(city)))
+        every { getCitiesUseCase.invoke("") } returns flowOf(PagingData.from(listOf(city)))
         toggleCityFavoriteUseCase = mockk(relaxed = true)
 
         viewModel = ListViewModel(getCitiesUseCase, toggleCityFavoriteUseCase)
@@ -65,7 +66,7 @@ class ListViewModelTest {
     fun `onToggleCityFavorite should call ToggleCityFavoriteUseCase`() = runTest {
         val city = mockk<City>(relaxed = true)
         val cityUiState = mockk<CityUiState>(relaxed = true)
-        every { getCitiesUseCase.invoke() } returns flowOf(PagingData.from(listOf(city)))
+        every { getCitiesUseCase.invoke("") } returns flowOf(PagingData.from(listOf(city)))
         coEvery { toggleCityFavoriteUseCase.invoke(any()) } returns Result.Success(Unit)
 
         viewModel = ListViewModel(getCitiesUseCase, toggleCityFavoriteUseCase)
@@ -80,7 +81,7 @@ class ListViewModelTest {
     @Test
     fun `onCitySelected updates selectedCity`() = runTest {
         val city = mockk<City>(relaxed = true)
-        every { getCitiesUseCase.invoke() } returns flowOf(PagingData.from(listOf(city)))
+        every { getCitiesUseCase.invoke("") } returns flowOf(PagingData.from(listOf(city)))
 
         viewModel = ListViewModel(getCitiesUseCase, toggleCityFavoriteUseCase)
 
@@ -88,5 +89,22 @@ class ListViewModelTest {
 
         val selected = viewModel.selectedCity.value
         assertEquals(city, selected)
+    }
+
+    @Test
+    fun `searchQuery updates triggers use case`() = runTest {
+        val query = "Bue"
+        val getCitiesUseCase = mockk<GetCitiesUseCase>()
+        val toggleCityFavoriteUseCase = mockk<ToggleCityFavoriteUseCase>(relaxed = true)
+
+        every { getCitiesUseCase(query) } returns flowOf(PagingData.empty())
+
+        val viewModel = ListViewModel(getCitiesUseCase, toggleCityFavoriteUseCase)
+
+        viewModel.onSearchQueryChanged(query)
+
+        viewModel.cities.first()
+
+        verify { getCitiesUseCase.invoke(query) }
     }
 }

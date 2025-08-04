@@ -9,7 +9,7 @@ interface CityRepository {
 
     suspend fun fetchCities(): Result<List<City>>
 
-    fun getCities(): Flow<PagingData<City>>
+    fun getCities(query: String): Flow<PagingData<City>>
 
     suspend fun getCityById(id: Int): Result<City>
 
