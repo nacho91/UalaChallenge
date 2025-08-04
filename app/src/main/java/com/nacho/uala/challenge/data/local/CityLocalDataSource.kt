@@ -9,8 +9,8 @@ class CityLocalDataSource @Inject constructor(
     private val dao: CityDao
 ) {
 
-    suspend fun getCities(limit: Int, offset: Int): List<CityEntity> {
-        return dao.getCities(limit, offset)
+    suspend fun getCities(query: String, limit: Int, offset: Int): List<CityEntity> {
+        return dao.getCities(query, limit, offset)
     }
 
     suspend fun getCityById(id: Int): CityEntity? {

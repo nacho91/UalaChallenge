@@ -6,6 +6,7 @@ import com.nacho.uala.challenge.data.local.model.CityEntity
 
 class CityLocalPagingSource(
     private val local: CityLocalDataSource,
+    private val query: String,
     private val pageSize: Int
 ) : PagingSource<Int, CityEntity>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, CityEntity> {
@@ -13,7 +14,7 @@ class CityLocalPagingSource(
         val offset = page * pageSize
 
         return try {
-            val data = local.getCities(limit = pageSize, offset = offset)
+            val data = local.getCities(query = query, limit = pageSize, offset = offset)
 
             LoadResult.Page(
                 data = data,

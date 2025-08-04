@@ -40,6 +40,7 @@ class ListScreenTest {
         )
 
         every { mockViewModel.selectedCity } returns MutableStateFlow(null)
+        every { mockViewModel.searchQuery } returns MutableStateFlow("")
 
         composeTestRule.setContent {
             WithOrientation(Configuration.ORIENTATION_PORTRAIT) {
@@ -78,6 +79,7 @@ class ListScreenTest {
         )
 
         every { mockViewModel.selectedCity } returns MutableStateFlow(null)
+        every { mockViewModel.searchQuery } returns MutableStateFlow("")
 
         composeTestRule.setContent {
             WithOrientation(Configuration.ORIENTATION_LANDSCAPE) {
@@ -116,6 +118,7 @@ class ListScreenTest {
         )
 
         every { mockViewModel.selectedCity } returns MutableStateFlow(null)
+        every { mockViewModel.searchQuery } returns MutableStateFlow("")
 
         composeTestRule.setContent {
             WithOrientation(Configuration.ORIENTATION_PORTRAIT) {
@@ -151,6 +154,7 @@ class ListScreenTest {
             PagingData.from(listOf(testCityUiState))
         )
         every { mockViewModel.selectedCity } returns MutableStateFlow(null)
+        every { mockViewModel.searchQuery } returns MutableStateFlow("")
 
         composeTestRule.setContent {
             ListScreen(

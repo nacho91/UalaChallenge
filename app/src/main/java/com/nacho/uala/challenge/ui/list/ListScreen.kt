@@ -2,7 +2,9 @@ package com.nacho.uala.challenge.ui.list
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -16,12 +18,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.nacho.uala.challenge.R
+import com.nacho.uala.challenge.R.string.error
+import com.nacho.uala.challenge.R.string.no_results
 import com.nacho.uala.challenge.domain.model.City
+import com.nacho.uala.challenge.ui.list.components.CitySearchBar
 import com.nacho.uala.challenge.ui.list.components.LandscapeListAndMap
 import com.nacho.uala.challenge.ui.list.components.PortraitCityList
 
@@ -32,41 +38,56 @@ fun ListScreen(
     navigateMap: (City) -> Unit
 ) {
     val selectedCity by viewModel.selectedCity.collectAsState()
-
+    val query by viewModel.searchQuery.collectAsState()
     val cities = viewModel.cities.collectAsLazyPagingItems()
 
     val hasItems = cities.itemCount > 0
-    val hasError = cities.loadState.refresh is LoadState.Error
+    val isLoading = cities.loadState.refresh is LoadState.Loading
+    val isError = cities.loadState.refresh is LoadState.Error
 
     val listState = rememberSaveable(saver = LazyListState.Saver) {
         LazyListState()
     }
 
-    when {
-        hasError -> {
-            ListError(modifier = modifier)
-        }
-        hasItems -> {
-            ListContent(
-                modifier = modifier,
-                listState = listState,
-                cities = cities,
-                selectedCity = selectedCity,
-                navigateMap = { city ->
-                    navigateMap(city)
-                },
-                onCityClick = { city ->
-                    viewModel.onCitySelected(city)
-                },
-                onToggleCityFavorite = { city ->
-                    viewModel.onToggleCityFavorite(city)
-                }
-            )
-        }
-        else -> {
-            ListLoading(modifier = modifier)
+    Column {
+        CitySearchBar(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            query = query,
+            onQueryChange = { query ->
+                viewModel.onSearchQueryChanged(query)
+            }
+        )
+
+        when {
+            hasItems -> {
+                ListContent(
+                    modifier = modifier,
+                    listState = listState,
+                    cities = cities,
+                    selectedCity = selectedCity,
+                    navigateMap = { city ->
+                        navigateMap(city)
+                    },
+                    onCityClick = { city ->
+                        viewModel.onCitySelected(city)
+                    },
+                    onToggleCityFavorite = { city ->
+                        viewModel.onToggleCityFavorite(city)
+                    }
+                )
+            }
+            isError -> {
+                ListError(modifier = modifier)
+            }
+            isLoading -> {
+                ListLoading(modifier = modifier)
+            }
+            else -> {
+                ListEmpty()
+            }
         }
     }
+
 }
 
 @Composable
@@ -91,8 +112,7 @@ fun ListContent(
             onCityClick = { city ->
                 onCityClick(city)
             },
-            onCityToggleFavorite = onToggleCityFavorite,
-
+            onCityToggleFavorite = onToggleCityFavorite
             )
     } else {
         PortraitCityList(
@@ -103,8 +123,7 @@ fun ListContent(
                 onCityClick(city)
                 navigateMap(city)
             },
-            onCityToggleFavorite = onToggleCityFavorite
-        )
+            onCityToggleFavorite = onToggleCityFavorite)
     }
 }
 
@@ -129,7 +148,22 @@ fun ListError(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = stringResource(R.string.error),
+            text = stringResource(error),
+            style = MaterialTheme.typography.headlineMedium
+        )
+    }
+}
+
+@Composable
+fun ListEmpty(
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = stringResource(no_results),
             style = MaterialTheme.typography.headlineMedium
         )
     }

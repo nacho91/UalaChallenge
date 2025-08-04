@@ -17,7 +17,7 @@ class GetCitiesUseCase @Inject constructor(
     @param:IoDispatcher private val dispatcher: CoroutineDispatcher
 ) {
 
-    operator fun invoke(): Flow<PagingData<City>> {
-        return repository.getCities().flowOn(dispatcher)
+    operator fun invoke(query: String): Flow<PagingData<City>> {
+        return repository.getCities(query).flowOn(dispatcher)
     }
 }

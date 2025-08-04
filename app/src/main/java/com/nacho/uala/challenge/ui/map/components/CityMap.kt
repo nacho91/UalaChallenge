@@ -15,7 +15,6 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.nacho.uala.challenge.R.string.map_marker_title
 import com.nacho.uala.challenge.R.string.map_marker_snippet
 import com.nacho.uala.challenge.domain.model.City
-import com.nacho.uala.challenge.ui.list.CityUiState
 
 @Composable
 fun CityMap(
