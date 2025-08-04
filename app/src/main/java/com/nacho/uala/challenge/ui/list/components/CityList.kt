@@ -40,6 +40,7 @@ import com.nacho.uala.challenge.domain.model.City
 import com.nacho.uala.challenge.ui.list.CityUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.nacho.uala.challenge.ui.component.FavoriteButton
 import kotlinx.coroutines.flow.flowOf
 
 @Composable
@@ -130,18 +131,12 @@ fun CityItem(
                 style = MaterialTheme.typography.bodySmall
             )
         }
-        IconButton(
+        FavoriteButton(
             modifier = Modifier.testTag("favorite_button"),
-            onClick = {
-                onToggleFavorite()
-            }
-        ) {
-            Icon(
-                imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                contentDescription = stringResource(city_favorite_button_desc),
-                tint = if (isFavorite) Color.Red else LocalContentColor.current
-            )
-        }
+            contentDescription = stringResource(city_favorite_button_desc),
+            isFavorite = isFavorite,
+            onToggleFavorite = onToggleFavorite
+        )
     }
 }
 

@@ -13,6 +13,9 @@ interface CityDao {
     @Query("SELECT * FROM cities WHERE name LIKE :query || '%' ORDER BY name ASC, country ASC LIMIT :limit OFFSET :offset")
     suspend fun getCities(query: String, limit: Int, offset: Int): List<CityEntity>
 
+    @Query("SELECT * FROM cities WHERE isFavorite = 1 AND name LIKE :query || '%' ORDER BY name ASC, country ASC LIMIT :limit OFFSET :offset")
+    suspend fun getFavoriteCities(query: String, limit: Int, offset: Int): List<CityEntity>
+
     @Query("SELECT * FROM cities WHERE id = :id LIMIT 1")
     suspend fun getCityById(id: Int): CityEntity?
 

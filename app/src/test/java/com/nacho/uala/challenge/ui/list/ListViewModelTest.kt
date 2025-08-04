@@ -52,7 +52,7 @@ class ListViewModelTest {
     fun `when GetCitiesUseCase emits data, ViewModel provides CityUiState in flow`() = runTest {
         val city = mockk<City>(relaxed = true)
 
-        every { getCitiesUseCase.invoke("") } returns flowOf(PagingData.from(listOf(city)))
+        every { getCitiesUseCase.invoke("", false) } returns flowOf(PagingData.from(listOf(city)))
         toggleCityFavoriteUseCase = mockk(relaxed = true)
 
         viewModel = ListViewModel(getCitiesUseCase, toggleCityFavoriteUseCase)
@@ -66,7 +66,7 @@ class ListViewModelTest {
     fun `onToggleCityFavorite should call ToggleCityFavoriteUseCase`() = runTest {
         val city = mockk<City>(relaxed = true)
         val cityUiState = mockk<CityUiState>(relaxed = true)
-        every { getCitiesUseCase.invoke("") } returns flowOf(PagingData.from(listOf(city)))
+        every { getCitiesUseCase.invoke("", false) } returns flowOf(PagingData.from(listOf(city)))
         coEvery { toggleCityFavoriteUseCase.invoke(any()) } returns Result.Success(Unit)
 
         viewModel = ListViewModel(getCitiesUseCase, toggleCityFavoriteUseCase)
@@ -81,7 +81,7 @@ class ListViewModelTest {
     @Test
     fun `onCitySelected updates selectedCity`() = runTest {
         val city = mockk<City>(relaxed = true)
-        every { getCitiesUseCase.invoke("") } returns flowOf(PagingData.from(listOf(city)))
+        every { getCitiesUseCase.invoke("", false) } returns flowOf(PagingData.from(listOf(city)))
 
         viewModel = ListViewModel(getCitiesUseCase, toggleCityFavoriteUseCase)
 
@@ -97,7 +97,7 @@ class ListViewModelTest {
         val getCitiesUseCase = mockk<GetCitiesUseCase>()
         val toggleCityFavoriteUseCase = mockk<ToggleCityFavoriteUseCase>(relaxed = true)
 
-        every { getCitiesUseCase(query) } returns flowOf(PagingData.empty())
+        every { getCitiesUseCase(query, false) } returns flowOf(PagingData.empty())
 
         val viewModel = ListViewModel(getCitiesUseCase, toggleCityFavoriteUseCase)
 
@@ -105,6 +105,19 @@ class ListViewModelTest {
 
         viewModel.cities.first()
 
-        verify { getCitiesUseCase.invoke(query) }
+        verify { getCitiesUseCase(query, false) }
+    }
+
+    @Test
+    fun `toggling favorites filter triggers use case with onlyFavorites true`() = runTest {
+        every { getCitiesUseCase("", true) } returns flowOf(PagingData.empty())
+
+        viewModel = ListViewModel(getCitiesUseCase, toggleCityFavoriteUseCase)
+
+        viewModel.onToggleFavoritesFilter(true)
+
+        viewModel.cities.first()
+
+        verify { getCitiesUseCase("", true) }
     }
 }

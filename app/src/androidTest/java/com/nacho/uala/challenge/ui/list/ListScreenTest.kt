@@ -41,6 +41,7 @@ class ListScreenTest {
 
         every { mockViewModel.selectedCity } returns MutableStateFlow(null)
         every { mockViewModel.searchQuery } returns MutableStateFlow("")
+        every { mockViewModel.showOnlyFavorites } returns MutableStateFlow(false)
 
         composeTestRule.setContent {
             WithOrientation(Configuration.ORIENTATION_PORTRAIT) {
@@ -80,6 +81,7 @@ class ListScreenTest {
 
         every { mockViewModel.selectedCity } returns MutableStateFlow(null)
         every { mockViewModel.searchQuery } returns MutableStateFlow("")
+        every { mockViewModel.showOnlyFavorites } returns MutableStateFlow(false)
 
         composeTestRule.setContent {
             WithOrientation(Configuration.ORIENTATION_LANDSCAPE) {
@@ -119,6 +121,7 @@ class ListScreenTest {
 
         every { mockViewModel.selectedCity } returns MutableStateFlow(null)
         every { mockViewModel.searchQuery } returns MutableStateFlow("")
+        every { mockViewModel.showOnlyFavorites } returns MutableStateFlow(false)
 
         composeTestRule.setContent {
             WithOrientation(Configuration.ORIENTATION_PORTRAIT) {
@@ -155,6 +158,7 @@ class ListScreenTest {
         )
         every { mockViewModel.selectedCity } returns MutableStateFlow(null)
         every { mockViewModel.searchQuery } returns MutableStateFlow("")
+        every { mockViewModel.showOnlyFavorites } returns MutableStateFlow(false)
 
         composeTestRule.setContent {
             ListScreen(
@@ -168,5 +172,40 @@ class ListScreenTest {
             .performClick()
 
         verify { mockViewModel.onCitySelected(testCity) }
+    }
+
+    @Test
+    fun favoritesFilterClick_callsOnToggleFavoritesFilter() {
+        val mockViewModel = mockk<ListViewModel>(relaxed = true)
+
+        val testCity = City(
+            id = 1,
+            name = "Buenos Aires",
+            country = "AR",
+            lat = -34.6,
+            lon = -58.4,
+            isFavorite = false
+        )
+        val testCityUiState = CityUiState(city = testCity, isFavorite = MutableStateFlow(testCity.isFavorite))
+
+        every { mockViewModel.cities } returns flowOf(
+            PagingData.from(listOf(testCityUiState))
+        )
+        every { mockViewModel.selectedCity } returns MutableStateFlow(null)
+        every { mockViewModel.searchQuery } returns MutableStateFlow("")
+        every { mockViewModel.showOnlyFavorites } returns MutableStateFlow(false)
+
+        composeTestRule.setContent {
+            ListScreen(
+                viewModel = mockViewModel,
+                navigateMap = {}
+            )
+        }
+
+        composeTestRule
+            .onNodeWithTag("favorite_filters_button")
+            .performClick()
+
+        verify { mockViewModel.onToggleFavoritesFilter(true) }
     }
 }
