@@ -1,7 +1,11 @@
 package com.nacho.uala.challenge.domain.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.nacho.uala.challenge.data.local.CityLocalDataSource
-import com.nacho.uala.challenge.data.local.model.CityEntity
+import com.nacho.uala.challenge.data.local.CityLocalPagingSource
 import com.nacho.uala.challenge.data.local.model.toDomain
 import com.nacho.uala.challenge.data.remote.CityRemoteDataSource
 import com.nacho.uala.challenge.data.remote.model.toDomain
@@ -9,7 +13,6 @@ import com.nacho.uala.challenge.domain.model.City
 import com.nacho.uala.challenge.domain.model.toEntity
 import com.nacho.uala.challenge.domain.util.Result
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import okio.IOException
 import javax.inject.Inject
@@ -30,14 +33,13 @@ class CityRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getCities(): Flow<Result<List<City>>> {
-        return local.getCities()
-            .map<List<CityEntity>, Result<List<City>>> { list ->
-                Result.Success(list.map { it.toDomain() })
-            }
-            .catch { e ->
-                emit(Result.Error.Database(e))
-            }
+    override fun getCities(): Flow<PagingData<City>> {
+        return Pager(
+            config = PagingConfig(pageSize = PAGE_SIZE, enablePlaceholders = false),
+            pagingSourceFactory = { CityLocalPagingSource(local, PAGE_SIZE) }
+        ).flow.map { pagingData ->
+            pagingData.map { it.toDomain() }
+        }
     }
 
     override suspend fun getCityById(id: Int): Result<City> {
@@ -80,5 +82,9 @@ class CityRepositoryImpl @Inject constructor(
         } catch (e: Throwable) {
             Result.Error.Database(e)
         }
+    }
+
+    private companion object {
+        const val PAGE_SIZE = 20
     }
 }

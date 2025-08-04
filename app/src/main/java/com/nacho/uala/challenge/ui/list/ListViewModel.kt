@@ -2,17 +2,17 @@ package com.nacho.uala.challenge.ui.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.nacho.uala.challenge.domain.model.City
-import com.nacho.uala.challenge.domain.repository.CityRepository
 import com.nacho.uala.challenge.domain.usecase.GetCitiesUseCase
 import com.nacho.uala.challenge.domain.usecase.ToggleCityFavoriteUseCase
-import com.nacho.uala.challenge.domain.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,27 +22,29 @@ class ListViewModel @Inject constructor(
     private val toggleCityFavoriteUseCase: ToggleCityFavoriteUseCase
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(ListUiState())
-    val uiState: StateFlow<ListUiState> = _state
+    private val favoritesCityMap = mutableMapOf<Int, MutableStateFlow<Boolean>>()
+
+    val cities: Flow<PagingData<CityUiState>> =
+        getCitiesUseCase()
+            .map { pagingData ->
+                pagingData.map { city ->
+                    val stateFlow = favoritesCityMap.getOrPut(city.id) {
+                        MutableStateFlow(city.isFavorite)
+                    }
+                    CityUiState(city, stateFlow)
+                }
+            }
+            .cachedIn(viewModelScope)
 
     private val _selectedCity = MutableStateFlow<City?>(null)
     val selectedCity: StateFlow<City?> = _selectedCity
 
-    init {
-        getCitiesUseCase()
-            .onEach { result ->
-                if (result is Result.Success) {
-                    _state.update { it.copy(isLoading = false, cities = result.data) }
-                } else {
-                    _state.update { it.copy(isLoading = false, isError = true) }
-                }
-            }
-            .launchIn(viewModelScope)
-    }
-
-    fun onToggleCityFavorite(city: City) {
+    fun onToggleCityFavorite(cityUiState: CityUiState) {
+        favoritesCityMap[cityUiState.city.id]?.let { state ->
+            state.value = !state.value
+        }
         viewModelScope.launch {
-            toggleCityFavoriteUseCase(city)
+            toggleCityFavoriteUseCase(cityUiState.city)
         }
     }
 
@@ -51,8 +53,7 @@ class ListViewModel @Inject constructor(
     }
 }
 
-data class ListUiState(
-    val isLoading: Boolean = true,
-    val isError: Boolean = false,
-    val cities: List<City>? = null
+data class CityUiState(
+    val city: City,
+    val isFavorite: StateFlow<Boolean>
 )

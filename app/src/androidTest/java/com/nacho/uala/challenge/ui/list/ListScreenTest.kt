@@ -4,12 +4,15 @@ import android.content.res.Configuration
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.paging.PagingData
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.nacho.uala.challenge.domain.model.City
 import com.nacho.uala.challenge.utils.WithOrientation
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 import org.junit.Rule
 import org.junit.Test
 
@@ -22,11 +25,18 @@ class ListScreenTest {
     fun listScreen_displaysCityInPortrait() {
         val mockViewModel = mockk<ListViewModel>(relaxed = true)
 
-        every { mockViewModel.uiState } returns MutableStateFlow(
-            ListUiState(
-                cities = emptyList(),
-                isLoading = false
-            )
+        val testCity = City(
+            id = 1,
+            name = "Buenos Aires",
+            country = "AR",
+            lat = -34.6,
+            lon = -58.4,
+            isFavorite = false
+        )
+        val testCityUiState = CityUiState(city = testCity, isFavorite = MutableStateFlow(testCity.isFavorite))
+
+        every { mockViewModel.cities } returns flowOf(
+            PagingData.from(listOf(testCityUiState))
         )
 
         every { mockViewModel.selectedCity } returns MutableStateFlow(null)
@@ -53,11 +63,18 @@ class ListScreenTest {
     fun listScreen_displaysCityInLandscape() {
         val mockViewModel = mockk<ListViewModel>(relaxed = true)
 
-        every { mockViewModel.uiState } returns MutableStateFlow(
-            ListUiState(
-                cities = emptyList(),
-                isLoading = false
-            )
+        val testCity = City(
+            id = 1,
+            name = "Buenos Aires",
+            country = "AR",
+            lat = -34.6,
+            lon = -58.4,
+            isFavorite = false
+        )
+        val testCityUiState = CityUiState(city = testCity, isFavorite = MutableStateFlow(testCity.isFavorite))
+
+        every { mockViewModel.cities } returns flowOf(
+            PagingData.from(listOf(testCityUiState))
         )
 
         every { mockViewModel.selectedCity } returns MutableStateFlow(null)
@@ -92,12 +109,10 @@ class ListScreenTest {
             lon = -58.4,
             isFavorite = false
         )
+        val testCityUiState = CityUiState(city = testCity, isFavorite = MutableStateFlow(testCity.isFavorite))
 
-        every { mockViewModel.uiState } returns MutableStateFlow(
-            ListUiState(
-                isLoading = false,
-                cities = listOf(testCity)
-            )
+        every { mockViewModel.cities } returns flowOf(
+            PagingData.from(listOf(testCityUiState))
         )
 
         every { mockViewModel.selectedCity } returns MutableStateFlow(null)
@@ -115,7 +130,7 @@ class ListScreenTest {
             .onNodeWithTag("favorite_button")
             .performClick()
 
-        verify { mockViewModel.onToggleCityFavorite(testCity) }
+        verify { mockViewModel.onToggleCityFavorite(testCityUiState) }
     }
 
     @Test
@@ -130,13 +145,10 @@ class ListScreenTest {
             lon = -58.4,
             isFavorite = false
         )
+        val testCityUiState = CityUiState(city = testCity, isFavorite = MutableStateFlow(testCity.isFavorite))
 
-        every { mockViewModel.uiState } returns MutableStateFlow(
-            ListUiState(
-                cities = listOf(testCity),
-                isLoading = false,
-                isError = false
-            )
+        every { mockViewModel.cities } returns flowOf(
+            PagingData.from(listOf(testCityUiState))
         )
         every { mockViewModel.selectedCity } returns MutableStateFlow(null)
 

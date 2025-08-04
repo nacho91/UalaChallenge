@@ -1,22 +1,25 @@
 package com.nacho.uala.challenge.ui.list.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,33 +27,64 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.nacho.uala.challenge.R
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import com.nacho.uala.challenge.R.string.city_title
 import com.nacho.uala.challenge.R.string.city_coordinates
 import com.nacho.uala.challenge.R.string.city_favorite_button_desc
+import com.nacho.uala.challenge.R.string.error
 import com.nacho.uala.challenge.domain.model.City
+import com.nacho.uala.challenge.ui.list.CityUiState
 
 @Composable
 fun CityList(
     modifier: Modifier = Modifier,
-    cities: List<City>,
+    listState: LazyListState,
+    cities: LazyPagingItems<CityUiState>,
     onClick: (City) -> Unit,
-    onToggleFavorite: (City) -> Unit
+    onToggleFavorite: (CityUiState) -> Unit
 ) {
     LazyColumn(
-        modifier = modifier
+        modifier = modifier,
+        state = listState
     ) {
-        items(cities) { city ->
-            CityItem(
-                modifier = Modifier.testTag("city_item"),
-                city = city,
-                onClick = {
-                    onClick(city)
-                },
-                onToggleFavorite = {
-                    onToggleFavorite(city)
+        items(
+            count = cities.itemCount,
+            key = { index -> cities.peek(index)?.city?.id ?: index }
+        ) { index ->
+            val cityUiState = cities[index]
+            if (cityUiState != null) {
+                CityItem(
+                    modifier = Modifier.testTag("city_item"),
+                    cityUiState = cityUiState,
+                    onClick = { onClick(cityUiState.city) },
+                    onToggleFavorite = {
+                        onToggleFavorite(cityUiState)
+                    }
+                )
+            }
+        }
+
+        when (cities.loadState.append) {
+            is LoadState.Loading -> item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
                 }
-            )
+            }
+            is LoadState.Error -> item {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    text = stringResource(error)
+                )
+            }
+            else -> Unit
         }
     }
 }
@@ -58,10 +92,14 @@ fun CityList(
 @Composable
 fun CityItem(
     modifier: Modifier = Modifier,
-    city: City,
+    cityUiState: CityUiState,
     onClick: () -> Unit,
     onToggleFavorite: () -> Unit
 ) {
+    val isFavorite by cityUiState.isFavorite.collectAsState()
+
+    val city = cityUiState.city
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -85,11 +123,14 @@ fun CityItem(
         }
         IconButton(
             modifier = Modifier.testTag("favorite_button"),
-            onClick = { onToggleFavorite() }) {
+            onClick = {
+                onToggleFavorite()
+            }
+        ) {
             Icon(
-                imageVector = if (city.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                 contentDescription = stringResource(city_favorite_button_desc),
-                tint = if (city.isFavorite) Color.Red else LocalContentColor.current
+                tint = if (isFavorite) Color.Red else LocalContentColor.current
             )
         }
     }
@@ -98,7 +139,7 @@ fun CityItem(
 @Preview
 @Composable
 fun CityListPreview() {
-    val cities = listOf(
+    /*val cities = listOf(
         City(
             id = 0,
             country = "AR",
@@ -116,10 +157,14 @@ fun CityListPreview() {
             isFavorite = true
         )
     )
+
+    val pagingData: PagingData<City> = PagingData.from(cities)
+    val lazyItems: LazyPagingItems<City> = pagingData.collectAsLazyPagingItems()
+
     CityList(
         modifier = Modifier.background(Color.White),
-        cities = cities,
+        cities = lazyItems,
         onClick = {},
         onToggleFavorite = {}
-    )
+    )*/
 }

@@ -1,5 +1,6 @@
 package com.nacho.uala.challenge.domain.usecase
 
+import androidx.paging.PagingData
 import com.nacho.uala.challenge.di.qualifiers.IoDispatcher
 import com.nacho.uala.challenge.domain.model.City
 import com.nacho.uala.challenge.domain.repository.CityRepository
@@ -16,7 +17,7 @@ class GetCitiesUseCase @Inject constructor(
     @param:IoDispatcher private val dispatcher: CoroutineDispatcher
 ) {
 
-    operator fun invoke(): Flow<Result<List<City>>> {
+    operator fun invoke(): Flow<PagingData<City>> {
         return repository.getCities().flowOn(dispatcher)
     }
 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -12,24 +13,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
+import androidx.paging.compose.LazyPagingItems
 import com.nacho.uala.challenge.R.string.map_empty_state
 import com.nacho.uala.challenge.domain.model.City
+import com.nacho.uala.challenge.ui.list.CityUiState
 import com.nacho.uala.challenge.ui.map.components.CityMap
 
 @Composable
 fun LandscapeListAndMap(
     modifier: Modifier = Modifier,
-    cities: List<City>,
+    listState: LazyListState,
+    cities: LazyPagingItems<CityUiState>,
     selectedCity: City?,
     onCityClick: (City) -> Unit,
-    onCityToggleFavorite: (City) -> Unit
+    onCityToggleFavorite: (CityUiState) -> Unit
 ) {
     Row(
         modifier = modifier.testTag("city_list_container")
     ) {
         CityList(
             modifier = Modifier.weight(1f),
+            listState = listState,
             cities = cities,
             onClick = onCityClick,
             onToggleFavorite = onCityToggleFavorite

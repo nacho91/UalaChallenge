@@ -6,13 +6,12 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.nacho.uala.challenge.data.local.model.CityEntity
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CityDao {
 
-    @Query("SELECT * FROM cities ORDER BY name ASC, country ASC")
-    fun getCities(): Flow<List<CityEntity>>
+    @Query("SELECT * FROM cities ORDER BY name ASC, country ASC LIMIT :limit OFFSET :offset")
+    suspend fun getCities(limit: Int, offset: Int): List<CityEntity>
 
     @Query("SELECT * FROM cities WHERE id = :id LIMIT 1")
     suspend fun getCityById(id: Int): CityEntity?
