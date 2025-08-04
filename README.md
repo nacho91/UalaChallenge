@@ -25,6 +25,7 @@ Permite explorar, buscar y marcar como favoritas diferentes ciudades del mundo u
 
 El proyecto sigue una arquitectura limpia basada en MVVM:
 
+```
 UI (Compose)
 │
 ├── ViewModel (maneja estado y lógica de UI)
@@ -35,18 +36,25 @@ UI (Compose)
 │
 ├── LocalDataSource (Room)
 └── RemoteDataSource (Retrofit)
+```
 
 ---
 
+
 🛠️ Decisiones técnicas
+
 •	🧩 Single Activity Architecture:
-Toda la navegación está implementada en una sola Activity utilizando Jetpack Navigation Compose.
+    Toda la navegación está implementada en una sola Activity utilizando Jetpack Navigation Compose.
+    
 •	🧱 100% Jetpack Compose:
-La interfaz de usuario está construida completamente con Jetpack Compose, incluyendo el layout, navegación, top bars, inputs y previews.
+    La interfaz de usuario está construida completamente con Jetpack Compose, incluyendo el layout, navegación, top bars, inputs y previews.
+    
 •	🧠 State management con StateFlow y Paging:
-Se utiliza StateFlow para manejar estado de UI, y Paging con LazyPagingItems para listas eficientes y reactivas.
+    Se utiliza StateFlow para manejar estado de UI, y Paging con LazyPagingItems para listas eficientes y reactivas.
+    
 •	✅ UI adaptativa y desacoplada:
-La UI se organiza en componentes reutilizables, testeables y desacoplados del estado (por ejemplo, CityList, CityItem, CityMap).
+    La UI se organiza en componentes reutilizables, testeables y desacoplados del estado (por ejemplo, CityList, CityItem, CityMap).
+
 
 ---
 
@@ -67,22 +75,28 @@ La UI se organiza en componentes reutilizables, testeables y desacoplados del es
 
 ## 📁 Organización del código
 
-•	data/
-    ├── local/
-    │   ├── model/            → Entidades Room (CityEntity)
-    │   ├── CityDao.kt
-    ├   └── CityLocalDataSource.kt
-    ├── remote/
-    │   ├── model/            → CityDTO
-    │   ├── CityApi.kt
-    │   └── CityRemoteDataSource.kt
-•	domain/
-    ├── model/                → Modelos de negocio (City)
-    ├── repository/           → Interfaces (ej: CityRepository)
-    ├── usecase/              → Casos de uso (GetCitiesUseCase, etc.)
-    ├── util/                 → Result
-•	ui/
-    ├── splash/               → SplashScreen, SplashViewModel
-    ├── list/                 → ListScreen, CityList, CityItem
-    └── map/                  → MapScreen, MapViewModel
-•	di/                       → Módulos de Hilt
+```
+data/           
+  local/
+    model/                  Entidades Room (CityEntity)
+    CityDao.kt   
+    CityLocalDataSource.kt
+
+  remote/
+    model/                  CityDTO
+    CityApi.kt
+    CityRemoteDataSource.kt
+
+domain/
+  model/                    Modelos de negocio (City)
+  repository/               Interfaces (CityRepository)
+  usecase/                  Casos de uso (GetCitiesUseCase, etc.)
+  util/                     Result, AppError
+
+ui/
+  splash/                   SplashScreen, SplashViewModel
+  list/                     ListScreen, CityList, CityItem
+  map/                      MapScreen, MapViewModel
+
+di/                         Módulos de Hilt
+```
