@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,11 +21,17 @@ fun CitySearchBar(
     OutlinedTextField(
         value = query,
         onValueChange = onQueryChange,
-        placeholder = { Text(text = stringResource(search_placeholder)) },
+        placeholder = {
+            Text(
+                text = stringResource(search_placeholder),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        },
         modifier = modifier.fillMaxWidth(),
         leadingIcon = {
             Icon(Icons.Default.Search, contentDescription = null)
         },
-        singleLine = true
+        singleLine = true,
+        textStyle = MaterialTheme.typography.bodyMedium,
     )
 }

@@ -4,7 +4,6 @@ import androidx.paging.PagingData
 import com.nacho.uala.challenge.di.qualifiers.IoDispatcher
 import com.nacho.uala.challenge.domain.model.City
 import com.nacho.uala.challenge.domain.repository.CityRepository
-import com.nacho.uala.challenge.domain.util.Result
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
@@ -17,7 +16,7 @@ class GetCitiesUseCase @Inject constructor(
     @param:IoDispatcher private val dispatcher: CoroutineDispatcher
 ) {
 
-    operator fun invoke(query: String): Flow<PagingData<City>> {
-        return repository.getCities(query).flowOn(dispatcher)
+    operator fun invoke(query: String, onlyFavorites: Boolean): Flow<PagingData<City>> {
+        return repository.getCities(query, onlyFavorites).flowOn(dispatcher)
     }
 }

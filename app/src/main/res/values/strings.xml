@@ -7,6 +7,7 @@
     <string name="retry_button">Retry</string>
 
     <string name="search_placeholder">Search city</string>
+    <string name="favorite_filter_button_desc">Filter favorites</string>
 
     <string name="city_title">%1$s, %2$s</string>
     <string name="city_coordinates">Coordinates: %1$f, %2$f</string>

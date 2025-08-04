@@ -13,6 +13,10 @@ class CityLocalDataSource @Inject constructor(
         return dao.getCities(query, limit, offset)
     }
 
+    suspend fun getFavoritesCities(query: String, limit: Int, offset: Int): List<CityEntity> {
+        return dao.getFavoriteCities(query, limit, offset)
+    }
+
     suspend fun getCityById(id: Int): CityEntity? {
         return dao.getCityById(id)
     }

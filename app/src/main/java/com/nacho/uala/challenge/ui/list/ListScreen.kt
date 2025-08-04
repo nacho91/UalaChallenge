@@ -5,16 +5,25 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -23,9 +32,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.nacho.uala.challenge.R
+import com.nacho.uala.challenge.R.string.city_favorite_button_desc
 import com.nacho.uala.challenge.R.string.error
+import com.nacho.uala.challenge.R.string.favorite_filter_button_desc
 import com.nacho.uala.challenge.R.string.no_results
 import com.nacho.uala.challenge.domain.model.City
+import com.nacho.uala.challenge.ui.component.FavoriteButton
 import com.nacho.uala.challenge.ui.list.components.CitySearchBar
 import com.nacho.uala.challenge.ui.list.components.LandscapeListAndMap
 import com.nacho.uala.challenge.ui.list.components.PortraitCityList
@@ -38,6 +51,7 @@ fun ListScreen(
 ) {
     val selectedCity by viewModel.selectedCity.collectAsState()
     val query by viewModel.searchQuery.collectAsState()
+    val showOnlyFavorites by viewModel.showOnlyFavorites.collectAsState()
     val cities = viewModel.cities.collectAsLazyPagingItems()
 
     val hasItems = cities.itemCount > 0
@@ -51,10 +65,14 @@ fun ListScreen(
     Scaffold(
         modifier = modifier,
         topBar = {
-            LisSearchBar(
+            ListTopAppBar(
                 query = query,
+                showOnlyFavorites = showOnlyFavorites,
                 onQueryChange = { query ->
                     viewModel.onSearchQueryChanged(query)
+                },
+                onToggleFavoritesFilter = {
+                    viewModel.onToggleFavoritesFilter(!showOnlyFavorites)
                 }
             )
         }
@@ -93,17 +111,35 @@ fun ListScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LisSearchBar(
+fun ListTopAppBar(
     modifier: Modifier = Modifier,
     query: String,
-    onQueryChange: (String) -> Unit
+    showOnlyFavorites: Boolean,
+    onQueryChange: (String) -> Unit,
+    onToggleFavoritesFilter: () -> Unit
 ) {
-    CitySearchBar(
-        modifier = modifier.padding(8.dp),
-        query = query,
-        onQueryChange = onQueryChange
+    TopAppBar(
+        modifier = modifier,
+        title = {
+            CitySearchBar(
+                modifier = modifier.padding(8.dp),
+                query = query,
+                onQueryChange = onQueryChange
+            )
+        },
+        actions = {
+            FavoriteButton(
+                modifier = Modifier.testTag("favorite_filters_button"),
+                contentDescription = stringResource(favorite_filter_button_desc),
+                isFavorite = showOnlyFavorites,
+                onToggleFavorite = onToggleFavoritesFilter
+            )
+        }
     )
+
+
 }
 
 @Composable

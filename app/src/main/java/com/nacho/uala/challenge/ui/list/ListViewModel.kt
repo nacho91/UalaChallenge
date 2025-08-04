@@ -13,6 +13,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -25,21 +26,27 @@ class ListViewModel @Inject constructor(
     private val toggleCityFavoriteUseCase: ToggleCityFavoriteUseCase
 ) : ViewModel() {
 
+    private val _showOnlyFavorites = MutableStateFlow(false)
+    val showOnlyFavorites: StateFlow<Boolean> = _showOnlyFavorites
+
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
+
     private val favoritesCityMap = mutableMapOf<Int, MutableStateFlow<Boolean>>()
 
     val cities: Flow<PagingData<CityUiState>> =
-        _searchQuery.flatMapLatest { getCitiesUseCase(it) }
-            .map { pagingData ->
-                pagingData.map { city ->
-                    val stateFlow = favoritesCityMap.getOrPut(city.id) {
-                        MutableStateFlow(city.isFavorite)
-                    }
-                    CityUiState(city, stateFlow)
+        combine(_searchQuery, _showOnlyFavorites) { query, favorites ->
+            query to favorites
+        }.flatMapLatest { (query, favorites) ->
+            getCitiesUseCase(query, favorites)
+        }.map { pagingData ->
+            pagingData.map { city ->
+                val stateFlow = favoritesCityMap.getOrPut(city.id) {
+                    MutableStateFlow(city.isFavorite)
                 }
+                CityUiState(city, stateFlow)
             }
-            .cachedIn(viewModelScope)
+        }.cachedIn(viewModelScope)
 
     private val _selectedCity = MutableStateFlow<City?>(null)
     val selectedCity: StateFlow<City?> = _selectedCity
@@ -59,6 +66,10 @@ class ListViewModel @Inject constructor(
 
     fun onSearchQueryChanged(query: String) {
         _searchQuery.value = query
+    }
+
+    fun onToggleFavoritesFilter(enabled: Boolean) {
+        _showOnlyFavorites.value = enabled
     }
 }
 
