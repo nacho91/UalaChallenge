@@ -47,7 +47,8 @@ class ListScreenTest {
             WithOrientation(Configuration.ORIENTATION_PORTRAIT) {
                 ListScreen(
                     viewModel = mockViewModel,
-                    navigateMap = {}
+                    navigateMap = {},
+                    navigateDetail = {}
                 )
             }
         }
@@ -87,7 +88,8 @@ class ListScreenTest {
             WithOrientation(Configuration.ORIENTATION_LANDSCAPE) {
                 ListScreen(
                     viewModel = mockViewModel,
-                    navigateMap = {}
+                    navigateMap = {},
+                    navigateDetail = {}
                 )
             }
         }
@@ -127,7 +129,8 @@ class ListScreenTest {
             WithOrientation(Configuration.ORIENTATION_PORTRAIT) {
                 ListScreen(
                     viewModel = mockViewModel,
-                    navigateMap = {}
+                    navigateMap = {},
+                    navigateDetail = {}
                 )
             }
         }
@@ -163,7 +166,8 @@ class ListScreenTest {
         composeTestRule.setContent {
             ListScreen(
                 viewModel = mockViewModel,
-                navigateMap = {}
+                navigateMap = {},
+                navigateDetail = {}
             )
         }
 
@@ -198,7 +202,8 @@ class ListScreenTest {
         composeTestRule.setContent {
             ListScreen(
                 viewModel = mockViewModel,
-                navigateMap = {}
+                navigateMap = {},
+                navigateDetail = {}
             )
         }
 
@@ -207,5 +212,41 @@ class ListScreenTest {
             .performClick()
 
         verify { mockViewModel.onToggleFavoritesFilter(true) }
+    }
+
+    @Test
+    fun infoClick_callsNavigateDetail() {
+        val mockViewModel = mockk<ListViewModel>(relaxed = true)
+
+        val testCity = City(
+            id = 1,
+            name = "Buenos Aires",
+            country = "AR",
+            lat = -34.6,
+            lon = -58.4,
+            isFavorite = false
+        )
+        val testCityUiState = CityUiState(city = testCity, isFavorite = MutableStateFlow(testCity.isFavorite))
+
+        every { mockViewModel.cities } returns flowOf(PagingData.from(listOf(testCityUiState)))
+        every { mockViewModel.selectedCity } returns MutableStateFlow(null)
+        every { mockViewModel.searchQuery } returns MutableStateFlow("")
+        every { mockViewModel.showOnlyFavorites } returns MutableStateFlow(false)
+
+        val navigateDetail = mockk<(City) -> Unit>(relaxed = true)
+
+        composeTestRule.setContent {
+            ListScreen(
+                viewModel = mockViewModel,
+                navigateMap = {},
+                navigateDetail = navigateDetail
+            )
+        }
+
+        composeTestRule
+            .onNodeWithTag("info_button")
+            .performClick()
+
+        verify { navigateDetail(testCity) }
     }
 }

@@ -24,23 +24,25 @@ fun LandscapeListAndMap(
     cities: LazyPagingItems<CityUiState>,
     selectedCity: City?,
     onCityClick: (City) -> Unit,
-    onCityToggleFavorite: (CityUiState) -> Unit
+    onCityToggleFavorite: (CityUiState) -> Unit,
+    onCityDetailClick: (City) -> Unit
 ) {
     Row(
         modifier = modifier.testTag("city_list_container")
     ) {
         CityList(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1.2f),
             listState = listState,
             cities = cities,
             onClick = onCityClick,
-            onToggleFavorite = onCityToggleFavorite
+            onToggleFavorite = onCityToggleFavorite,
+            onCityDetailClick = onCityDetailClick
         )
 
         Box(
             modifier = Modifier
                 .fillMaxHeight()
-                .weight(2f)
+                .weight(1.8f)
                 .testTag("city_map_container"),
             contentAlignment = Alignment.Center
         ) {

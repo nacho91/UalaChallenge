@@ -13,13 +13,15 @@ fun PortraitCityList(
     listState: LazyListState,
     cities: LazyPagingItems<CityUiState>,
     onCityClick: (City) -> Unit,
-    onCityToggleFavorite: (CityUiState) -> Unit
+    onCityToggleFavorite: (CityUiState) -> Unit,
+    onCityDetailClick: (City) -> Unit
 ) {
     CityList(
         modifier = modifier,
         listState = listState,
         cities = cities,
         onClick = onCityClick,
-        onToggleFavorite = onCityToggleFavorite
+        onToggleFavorite = onCityToggleFavorite,
+        onCityDetailClick = onCityDetailClick
     )
 }

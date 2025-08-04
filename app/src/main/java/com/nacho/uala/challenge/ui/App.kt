@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.nacho.uala.challenge.ui.detail.CityDetailScreen
 import com.nacho.uala.challenge.ui.list.ListScreen
 import com.nacho.uala.challenge.ui.map.MapScreen
 import com.nacho.uala.challenge.ui.splash.SplashScreen
@@ -36,6 +37,9 @@ fun App() {
                 ListScreen(
                     navigateMap = { city ->
                         navController.navigate("map/${city.id}")
+                    },
+                    navigateDetail = { city ->
+                        navController.navigate("detail/${city.id}")
                     }
                 )
             }
@@ -47,6 +51,20 @@ fun App() {
                 val cityId = backStackEntry.arguments?.getInt("cityId") ?: return@composable
 
                 MapScreen(
+                    cityId = cityId,
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
+            composable(
+                "detail/{cityId}",
+                arguments = listOf(navArgument("cityId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val cityId = backStackEntry.arguments?.getInt("cityId") ?: return@composable
+
+                CityDetailScreen(
                     cityId = cityId,
                     onBackClick = {
                         navController.popBackStack()

@@ -12,11 +12,19 @@
     <string name="city_title">%1$s, %2$s</string>
     <string name="city_coordinates">Coordinates: %1$f, %2$f</string>
     <string name="city_favorite_button_desc">Favorite button</string>
+    <string name="city_info_button_desc">Information button</string>
 
     <string name="map_empty_state">Select a city</string>
 
     <string name="map_title">Map</string>
     <string name="map_marker_title">%1$s, %2$s</string>
     <string name="map_marker_snippet">Lat %1$s, Long %2$s</string>
+
+    <string name="detail_title">Detail</string>
+
+    <string name="detail_city">City %1$s</string>
+    <string name="detail_country">Country %1$s</string>
+    <string name="detail_latitude">Latitude %1$f</string>
+    <string name="detail_longitude">Longitude %1$f</string>
 
 </resources>

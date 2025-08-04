@@ -11,12 +11,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,7 +22,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,6 +37,8 @@ import com.nacho.uala.challenge.domain.model.City
 import com.nacho.uala.challenge.ui.list.CityUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.nacho.uala.challenge.R
+import com.nacho.uala.challenge.R.string.city_info_button_desc
 import com.nacho.uala.challenge.ui.component.FavoriteButton
 import kotlinx.coroutines.flow.flowOf
 
@@ -49,7 +48,8 @@ fun CityList(
     listState: LazyListState,
     cities: LazyPagingItems<CityUiState>,
     onClick: (City) -> Unit,
-    onToggleFavorite: (CityUiState) -> Unit
+    onToggleFavorite: (CityUiState) -> Unit,
+    onCityDetailClick: (City) -> Unit
 ) {
     LazyColumn(
         modifier = modifier,
@@ -67,6 +67,9 @@ fun CityList(
                     onClick = { onClick(cityUiState.city) },
                     onToggleFavorite = {
                         onToggleFavorite(cityUiState)
+                    },
+                    onCityDetailClick = {
+                        onCityDetailClick(cityUiState.city)
                     }
                 )
             }
@@ -104,7 +107,8 @@ fun CityItem(
     modifier: Modifier = Modifier,
     cityUiState: CityUiState,
     onClick: () -> Unit,
-    onToggleFavorite: () -> Unit
+    onToggleFavorite: () -> Unit,
+    onCityDetailClick: () -> Unit
 ) {
     val isFavorite by cityUiState.isFavorite.collectAsState()
 
@@ -137,6 +141,15 @@ fun CityItem(
             isFavorite = isFavorite,
             onToggleFavorite = onToggleFavorite
         )
+        IconButton(
+            modifier = Modifier.testTag("info_button"),
+            onClick = onCityDetailClick
+        ) {
+            Icon(
+                imageVector = Icons.Default.Info,
+                contentDescription = stringResource(city_info_button_desc)
+            )
+        }
     }
 }
 
@@ -177,6 +190,7 @@ fun CityListPreview() {
         listState = rememberLazyListState(),
         cities = lazyPagingCities,
         onClick = {},
+        onCityDetailClick = {},
         onToggleFavorite = {}
     )
 }
