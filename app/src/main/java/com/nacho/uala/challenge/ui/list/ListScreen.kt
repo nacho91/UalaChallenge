@@ -2,12 +2,12 @@ package com.nacho.uala.challenge.ui.list
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,7 +23,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.nacho.uala.challenge.R
 import com.nacho.uala.challenge.R.string.error
 import com.nacho.uala.challenge.R.string.no_results
 import com.nacho.uala.challenge.domain.model.City
@@ -49,19 +48,21 @@ fun ListScreen(
         LazyListState()
     }
 
-    Column {
-        CitySearchBar(
-            modifier = Modifier.padding(horizontal = 8.dp),
-            query = query,
-            onQueryChange = { query ->
-                viewModel.onSearchQueryChanged(query)
-            }
-        )
-
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            LisSearchBar(
+                query = query,
+                onQueryChange = { query ->
+                    viewModel.onSearchQueryChanged(query)
+                }
+            )
+        }
+    ) { paddingValues ->
         when {
             hasItems -> {
                 ListContent(
-                    modifier = modifier,
+                    modifier = Modifier.padding(paddingValues),
                     listState = listState,
                     cities = cities,
                     selectedCity = selectedCity,
@@ -76,18 +77,33 @@ fun ListScreen(
                     }
                 )
             }
+
             isError -> {
-                ListError(modifier = modifier)
+                ListError(modifier = Modifier.padding(paddingValues))
             }
+
             isLoading -> {
-                ListLoading(modifier = modifier)
+                ListLoading(modifier = Modifier.padding(paddingValues))
             }
+
             else -> {
-                ListEmpty()
+                ListEmpty(modifier = Modifier.padding(paddingValues))
             }
         }
     }
+}
 
+@Composable
+fun LisSearchBar(
+    modifier: Modifier = Modifier,
+    query: String,
+    onQueryChange: (String) -> Unit
+) {
+    CitySearchBar(
+        modifier = modifier.padding(8.dp),
+        query = query,
+        onQueryChange = onQueryChange
+    )
 }
 
 @Composable
@@ -113,17 +129,20 @@ fun ListContent(
                 onCityClick(city)
             },
             onCityToggleFavorite = onToggleCityFavorite
-            )
+        )
     } else {
         PortraitCityList(
-            modifier = modifier.fillMaxSize().testTag("city_list_container"),
+            modifier = modifier
+                .fillMaxSize()
+                .testTag("city_list_container"),
             listState = listState,
             cities = cities,
             onCityClick = { city ->
                 onCityClick(city)
                 navigateMap(city)
             },
-            onCityToggleFavorite = onToggleCityFavorite)
+            onCityToggleFavorite = onToggleCityFavorite
+        )
     }
 }
 

@@ -14,6 +14,7 @@
 
     <string name="map_empty_state">Select a city</string>
 
+    <string name="map_title">Map</string>
     <string name="map_marker_title">%1$s, %2$s</string>
     <string name="map_marker_snippet">Lat %1$s, Long %2$s</string>
 

@@ -1,8 +1,8 @@
 package com.nacho.uala.challenge.ui
 
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
@@ -19,36 +19,39 @@ fun App() {
     MaterialTheme {
         val navController = rememberNavController()
 
-        Scaffold { innerPadding ->
-            NavHost(
-                modifier = Modifier.padding(innerPadding),
-                navController = navController,
-                startDestination = "splash"
-            ) {
-                composable("splash") {
-                    SplashScreen(
-                        navController = navController
-                    )
-                }
+        NavHost(
+            modifier = Modifier
+                .fillMaxSize()
+                .systemBarsPadding(),
+            navController = navController,
+            startDestination = "splash"
+        ) {
+            composable("splash") {
+                SplashScreen(
+                    navController = navController
+                )
+            }
 
-                composable("list") {
-                    ListScreen(
-                        navigateMap = { city ->
-                            navController.navigate("map/${city.id}")
-                        }
-                    )
-                }
+            composable("list") {
+                ListScreen(
+                    navigateMap = { city ->
+                        navController.navigate("map/${city.id}")
+                    }
+                )
+            }
 
-                composable(
-                    "map/{cityId}",
-                    arguments = listOf(navArgument("cityId") { type = NavType.IntType })
-                ) { backStackEntry ->
-                    val cityId = backStackEntry.arguments?.getInt("cityId") ?: return@composable
+            composable(
+                "map/{cityId}",
+                arguments = listOf(navArgument("cityId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val cityId = backStackEntry.arguments?.getInt("cityId") ?: return@composable
 
-                    MapScreen(
-                        cityId = cityId
-                    )
-                }
+                MapScreen(
+                    cityId = cityId,
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
             }
         }
     }
