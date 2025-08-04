@@ -1,7 +1,6 @@
 package com.nacho.uala.challenge.data.local
 
 import com.nacho.uala.challenge.data.local.model.CityEntity
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -10,8 +9,8 @@ class CityLocalDataSource @Inject constructor(
     private val dao: CityDao
 ) {
 
-    fun getCities(): Flow<List<CityEntity>> {
-        return dao.getCities()
+    suspend fun getCities(limit: Int, offset: Int): List<CityEntity> {
+        return dao.getCities(limit, offset)
     }
 
     suspend fun getCityById(id: Int): CityEntity? {

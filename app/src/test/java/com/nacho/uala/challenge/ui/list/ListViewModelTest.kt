@@ -1,6 +1,6 @@
 package com.nacho.uala.challenge.ui.list
 
-import app.cash.turbine.test
+import androidx.paging.PagingData
 import com.nacho.uala.challenge.domain.model.City
 import com.nacho.uala.challenge.domain.usecase.GetCitiesUseCase
 import com.nacho.uala.challenge.domain.usecase.ToggleCityFavoriteUseCase
@@ -19,10 +19,10 @@ import org.junit.Test
 import com.nacho.uala.challenge.domain.util.Result
 import io.mockk.coEvery
 import io.mockk.coVerify
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ListViewModelTest {
@@ -48,50 +48,29 @@ class ListViewModelTest {
     }
 
     @Test
-    fun `when GetCitiesUseCase returns success, ViewModel updates uiState with cities`() = runTest {
+    fun `when GetCitiesUseCase emits data, ViewModel provides CityUiState in flow`() = runTest {
         val city = mockk<City>(relaxed = true)
-        every { getCitiesUseCase.invoke() } returns flowOf(Result.Success(listOf(city)))
+
+        every { getCitiesUseCase.invoke() } returns flowOf(PagingData.from(listOf(city)))
+        toggleCityFavoriteUseCase = mockk(relaxed = true)
 
         viewModel = ListViewModel(getCitiesUseCase, toggleCityFavoriteUseCase)
 
-        viewModel.uiState.test {
-            val loadingState = awaitItem()
-            assertEquals(true, loadingState.isLoading)
+        val result = viewModel.cities.first()
 
-            val endState = awaitItem()
-            assertEquals(false, endState.isLoading)
-            assertEquals(false, endState.isError)
-            assertNotNull(endState.cities)
-        }
-    }
-
-    @Test
-    fun `when GetCitiesUseCase returns error, ViewModel sets isError`() = runTest {
-        every { getCitiesUseCase.invoke() } returns
-                flowOf(Result.Error.Database(Throwable("Database error")))
-
-        viewModel = ListViewModel(getCitiesUseCase, toggleCityFavoriteUseCase)
-
-        viewModel.uiState.test {
-            val loadingState = awaitItem()
-            assertEquals(true, loadingState.isLoading)
-
-            val endState = awaitItem()
-            assertEquals(false, endState.isLoading)
-            assertEquals(true, endState.isError)
-            assertNull(endState.cities)
-        }
+        assertNotNull(result)
     }
 
     @Test
     fun `onToggleCityFavorite should call ToggleCityFavoriteUseCase`() = runTest {
         val city = mockk<City>(relaxed = true)
-        every { getCitiesUseCase.invoke() } returns flowOf(Result.Success(listOf(city)))
+        val cityUiState = mockk<CityUiState>(relaxed = true)
+        every { getCitiesUseCase.invoke() } returns flowOf(PagingData.from(listOf(city)))
         coEvery { toggleCityFavoriteUseCase.invoke(any()) } returns Result.Success(Unit)
 
         viewModel = ListViewModel(getCitiesUseCase, toggleCityFavoriteUseCase)
 
-        viewModel.onToggleCityFavorite(city)
+        viewModel.onToggleCityFavorite(cityUiState)
 
         advanceUntilIdle()
 
@@ -101,7 +80,7 @@ class ListViewModelTest {
     @Test
     fun `onCitySelected updates selectedCity`() = runTest {
         val city = mockk<City>(relaxed = true)
-        every { getCitiesUseCase.invoke() } returns flowOf(Result.Success(listOf(city)))
+        every { getCitiesUseCase.invoke() } returns flowOf(PagingData.from(listOf(city)))
 
         viewModel = ListViewModel(getCitiesUseCase, toggleCityFavoriteUseCase)
 

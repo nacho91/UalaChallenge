@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.nacho.uala.challenge.domain.model.City
 import com.nacho.uala.challenge.domain.usecase.GetCityByIdUseCase
 import com.nacho.uala.challenge.domain.util.Result
-import com.nacho.uala.challenge.ui.list.ListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
