@@ -1,5 +1,7 @@
 # UalaChallenge
 
+📄 [Ver enunciado del ejercicio (PDF)](./Mobile%20Challenge%20-%20Engineer%20-%20v0.8.pdf)
+
 Aplicación desarrollada como parte del challenge técnico para la posición Android en Ualá.  
 Permite explorar, buscar y marcar como favoritas diferentes ciudades del mundo utilizando una API remota y persistencia local.
 
