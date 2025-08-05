@@ -27,18 +27,10 @@ import com.nacho.uala.challenge.R.string.retry_button
 @Composable
 fun SplashScreen(
     modifier: Modifier = Modifier,
-    navController: NavController,
+    navigateList: () -> Unit,
     viewModel: SplashViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
-
-    LaunchedEffect(state.isSuccess) {
-        if (state.isSuccess) {
-            navController.navigate("list") {
-                popUpTo("splash") { inclusive = true }
-            }
-        }
-    }
 
     Box(
         modifier = modifier.fillMaxSize(),
@@ -54,6 +46,11 @@ fun SplashScreen(
                         viewModel.initializeCities()
                     }
                 )
+            }
+            state.isSuccess -> {
+                LaunchedEffect(Unit) {
+                    navigateList()
+                }
             }
         }
     }

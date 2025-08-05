@@ -21,54 +21,51 @@ fun App() {
         val navController = rememberNavController()
 
         NavHost(
-            modifier = Modifier
-                .fillMaxSize()
-                .systemBarsPadding(),
             navController = navController,
-            startDestination = "splash"
+            startDestination = AppDestination.Splash.route
         ) {
-            composable("splash") {
+            composable(AppDestination.Splash.route) {
                 SplashScreen(
-                    navController = navController
+                    navigateList = {
+                        navController.navigate(AppDestination.List.route) {
+                            popUpTo(AppDestination.Splash.route) { inclusive = true }
+                        }
+                    }
                 )
             }
 
-            composable("list") {
+            composable(AppDestination.List.route) {
                 ListScreen(
                     navigateMap = { city ->
-                        navController.navigate("map/${city.id}")
+                        navController.navigate(AppDestination.Map.createRoute(city.id))
                     },
                     navigateDetail = { city ->
-                        navController.navigate("detail/${city.id}")
+                        navController.navigate(AppDestination.Detail.createRoute(city.id))
                     }
                 )
             }
 
             composable(
-                "map/{cityId}",
+                AppDestination.Map.route,
                 arguments = listOf(navArgument("cityId") { type = NavType.IntType })
             ) { backStackEntry ->
                 val cityId = backStackEntry.arguments?.getInt("cityId") ?: return@composable
 
                 MapScreen(
                     cityId = cityId,
-                    onBackClick = {
-                        navController.popBackStack()
-                    }
+                    onBackClick = { navController.popBackStack() }
                 )
             }
 
             composable(
-                "detail/{cityId}",
+                AppDestination.Detail.route,
                 arguments = listOf(navArgument("cityId") { type = NavType.IntType })
             ) { backStackEntry ->
                 val cityId = backStackEntry.arguments?.getInt("cityId") ?: return@composable
 
                 CityDetailScreen(
                     cityId = cityId,
-                    onBackClick = {
-                        navController.popBackStack()
-                    }
+                    onBackClick = { navController.popBackStack() }
                 )
             }
         }
