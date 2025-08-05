@@ -98,12 +98,13 @@ domain/
   model/                    Modelos de negocio (City)
   repository/               Interfaces (CityRepository)
   usecase/                  Casos de uso (GetCitiesUseCase, etc.)
-  util/                     Result, AppError
+  util/                     Result, ResultUtils
 
 ui/
   splash/                   SplashScreen, SplashViewModel
   list/                     ListScreen, CityList, CityItem
   map/                      MapScreen, MapViewModel
+  detail/                   CityDetailScreen, CityDetailViewModel
 
 di/                         Módulos de Hilt
 ```
