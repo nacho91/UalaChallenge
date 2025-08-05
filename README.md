@@ -3,12 +3,12 @@
 Aplicación desarrollada como parte del challenge técnico para la posición Android en Ualá.  
 Permite explorar, buscar y marcar como favoritas diferentes ciudades del mundo utilizando una API remota y persistencia local.
 
-<img width="200" alt="Screenshot_20250804_003932" src="https://github.com/user-attachments/assets/38f8bb14-a6a2-40c6-ae67-769928cc3c39" />
+<img width="200" alt="Screenshot_20250804_205831" src="https://github.com/user-attachments/assets/c4e121b7-ba9b-4f5a-bd1d-5a58d23028ae" />
 <img width="200" alt="Screenshot_20250804_003949" src="https://github.com/user-attachments/assets/531bdbd2-76e1-43a4-8d6b-76659015504e" />
+<img width="200"  alt="Screenshot_20250804_212405" src="https://github.com/user-attachments/assets/233d16c0-bb82-4c4a-a144-a6915f22fa39" />
 
 ---
-
-<img width="400" alt="Screenshot_20250803_233408" src="https://github.com/user-attachments/assets/a58c66ed-45e7-4d30-8974-5bba6aa0d90c" />
+<img width="500" alt="Screenshot_20250804_212430" src="https://github.com/user-attachments/assets/88bc7703-a7cf-437e-a8d2-de9f8b638c5c" />
 
 ---
 
